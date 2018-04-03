@@ -291,6 +291,7 @@ func (api *API) ZoneActivationCheck(zoneID string) (Response, error) {
 //
 // API reference: https://api.cloudflare.com/#zone-list-zones
 func (api *API) ListZones(z ...string) ([]Zone, error) {
+	v := url.Values{}
 	var res []byte
 	var r ZonesResponse
 	var zones []Zone
