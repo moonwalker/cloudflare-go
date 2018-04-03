@@ -16,6 +16,11 @@ type Owner struct {
 	OwnerType string `json:"owner_type"`
 }
 
+// ZoneListRequest describes the options for zones list.
+type ZoneListRequest struct {
+	PerPage int `json:"per_page"`
+}
+
 // Zone describes a Cloudflare zone.
 type Zone struct {
 	ID   string `json:"id"`
@@ -319,7 +324,10 @@ func (api *API) ListZones(z ...string) ([]Zone, error) {
 		// TODO: Paginate here. We only grab the first page of results.
 		// Could do this concurrently after the first request by creating a
 		// sync.WaitGroup or just a channel + workers.
-		res, err = api.makeRequest("GET", "/zones", nil)
+		zoneListOpts := &ZoneListRequest{
+			PerPage: 50,
+		}
+		res, err = api.makeRequest("GET", "/zones", zoneListOpts)
 		if err != nil {
 			return []Zone{}, errors.Wrap(err, errMakeRequestError)
 		}
