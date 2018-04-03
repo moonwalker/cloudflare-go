@@ -301,10 +301,13 @@ func (api *API) ListZones(z ...string) ([]Zone, error) {
 	var r ZonesResponse
 	var zones []Zone
 	var err error
+	zoneListOpts := &ZoneListRequest{
+		PerPage: 50,
+	}
 	if len(z) > 0 {
 		for _, zone := range z {
 			v.Set("name", zone)
-			res, err = api.makeRequest("GET", "/zones?"+v.Encode(), nil)
+			res, err = api.makeRequest("GET", "/zones?"+v.Encode(), zoneListOpts)
 			if err != nil {
 				return []Zone{}, errors.Wrap(err, errMakeRequestError)
 			}
@@ -324,9 +327,6 @@ func (api *API) ListZones(z ...string) ([]Zone, error) {
 		// TODO: Paginate here. We only grab the first page of results.
 		// Could do this concurrently after the first request by creating a
 		// sync.WaitGroup or just a channel + workers.
-		zoneListOpts := &ZoneListRequest{
-			PerPage: 50,
-		}
 		res, err = api.makeRequest("GET", "/zones", zoneListOpts)
 		if err != nil {
 			return []Zone{}, errors.Wrap(err, errMakeRequestError)
